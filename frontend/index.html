@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Task Tracker</title>
+  </head>
+  <body>
+    <h1>Hello From Task Tracker!</h1>
+    <div class="tasks"></div>
+
+    <script>
+      const tasks = fetch("http://localhost:3000/tasks")
+        .then((response) => {
+          return response.json();
+        })
+        .then((parsed) => {
+          console.log("parsed response", parsed);
+          renderTasks(parsed); 
+        })
+        .catch((err) => console.error(err));
+
+        function makeTaskItem(task) {
+        const { title, description, status } = task;
+
+    
+        const taskTitle = document.createElement("h3");
+        taskTitle.classList.add("task-title");
+        taskTitle.textContent = title;
+        taskElement.append(taskTitle);
+
+        const taskDescription = document.createElement("p");
+        taskDescription.classList.add("task-description");
+        taskDescription.textContent = description;
+        taskElement.append(taskDescription);
+
+        const taskStatus = document.createElement("h5");
+        taskStatus.classList.add("task-status");
+        taskStatus.textContent = status;
+        taskElement.append(taskStatus);
+
+        return taskElement;
+      }
+
+      function renderTasks(tasks) {
+        const tasksContainer = document.querySelector(".tasks");
+
+        const taskList = document.createElement("ul");
+        taskList.classList.add("task-list");
+
+        for (let task of tasks) {
+          const nextTaskElement = makeTaskItem(task);
+          taskList.append(nextTaskElement);
+        }
+
+        tasksContainer.append(taskList);
+      }
+    </script>
+  </body>
+</html>
