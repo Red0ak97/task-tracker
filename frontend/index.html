@@ -22,11 +22,32 @@
       .task-remove-button:hover {
         background: rgba(43, 45, 66, 0.7);
       }
+
+            .task-edit-button {
+        width: 180px;
+        height: 40px;
+        outline: none;
+        cursor: pointer;
+        text-transform: uppercase;
+        border-radius: 10px;
+        background: rgba(91, 102, 223);
+        color: #f7f7f9;
+        border: none;
+      }
+
+      .task-edit-button:hover {
+        background: rgb(91, 102, 223, 0.7);
+      }
+
+      .task-actions {
+        display: flex;
+        gap: 10px;
+      }
     </style>
   </head>
   <body>
-    <h1>Hello From Task Tracker!</h1>
+     <h1>Hello From Task Tracker!</h1>
     <div class="tasks"></div>
-    <script src="./script.js"></script>
+    <script type="module" src="./main.js"></script>
   </body>
 </html>

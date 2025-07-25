@@ -1,20 +1,7 @@
-// запросить данные с сервера
-
-function getDataAndRender() {
-  fetch("http://localhost:3000/tasks")
-    .then((response) => {
-      return response.json();
-    })
-    .then((parsed) => {
-      console.log("PARSED", parsed);
-      // отрисовать данные (parsed) на странице
-      renderTasks(parsed);
-    })
-    .catch((err) => console.error(err));
-}
+import { getTasks, removeTask, editTask } from "./api.js";
 
 // начальный рендер
-getDataAndRender();
+getTasks().then(renderTasks);
 
 function makeTaskItem(task) {
   const { title, description, status, id } = task;
@@ -37,22 +24,41 @@ function makeTaskItem(task) {
   taskStatus.textContent = status;
   taskElement.append(taskStatus);
 
+  const taskActions = document.createElement("div");
+  taskActions.classList.add("task-actions");
+
   const removeButton = document.createElement("button");
   removeButton.classList.add("task-remove-button");
   removeButton.textContent = "remove button";
-  taskElement.append(removeButton);
+  taskActions.append(removeButton);
 
   removeButton.addEventListener("click", () => {
-    fetch(`http://localhost:3000/tasks/${id}`, { method: "DELETE" }).then(
-      (response) => {
-        if (+response.status === 200) {
-          console.log("успешно удалено!");
-          getDataAndRender();
-        }
-      }
-    );
+    removeTask(id)
+      .then(() => getTasks().then(renderTasks))
+      .catch(console.log);
   });
 
+  const editButton = document.createElement("button");
+  editButton.classList.add("task-edit-button");
+  editButton.textContent = "edit button";
+  taskActions.append(editButton);
+
+  editButton.addEventListener("click", () => {
+    console.log("Task Prev Title", task.title);
+    // открываем форму редактирования задачи
+    // пихаем в форму значения кнкретной задачи
+    // вешаем обработчики событий на элементы формы
+    // вешаем обработчик события на сохранение формы -> отправляем запрос PUT
+    // добавляем кнопку отмены
+
+    task.title = "aasdfasdfadsfadsfasfdsfds!";
+
+    editTask(task)
+      .then(() => getTasks().then(renderTasks))
+      .catch(console.log);
+  });
+
+  taskElement.append(taskActions);
   return taskElement;
 }
 
