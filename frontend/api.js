@@ -1,7 +1,5 @@
 const BASE_URL = "http://localhost:3000";
 
-// API - Application Programming Interface
-
 export function getTasks() {
   console.log("new get tasks");
   return fetch(`${BASE_URL}/tasks`)
@@ -40,7 +38,27 @@ export function editTask(updatedTask) {
   );
 }
 
-// export function createTask(newTask) {
-//   // newTask.id - должен быть новый
-//   // POST
-// }
+export function addTask(newTask) {
+  const body = JSON.stringify(newTask);
+
+  return fetch(`${BASE_URL}/tasks`, { method: "POST", body }).then((res) => {
+    if (String(res.status).startsWith("2")) {
+      return true;
+    } else {
+      throw new Error("Ошибка при редактировании задачи. Попрбуйте снова");
+    }
+  });
+}
+
+export function isTaskValid(task) {
+  // Валидация: проверяем, что title и description не пустые
+  // trim() удаляет пробелы по краям, чтобы "   " не считалось валидным
+  if (!task.title || task.title.trim() === "") {
+    return false;
+  }
+  if (!task.description || task.description.trim() === "") {
+    return false;
+  }
+  // Добавь здесь другие правила валидации, если нужно (например, для status)
+  return true;
+}

@@ -1,5 +1,5 @@
-import { getTasks, removeTask, editTask } from "./api.js";
-
+import { getTasks, addTask, editTask, isTaskValid } from "./api.js";
+import { createTaskForm } from "./components/index.js"
 // начальный рендер
 getTasks().then(renderTasks);
 
@@ -28,8 +28,8 @@ function makeTaskItem(task) {
   taskActions.classList.add("task-actions");
 
   const removeButton = document.createElement("button");
-  removeButton.classList.add("task-remove-button");
-  removeButton.textContent = "remove button";
+  removeButton.classList.add("button", "task-remove-button");
+  removeButton.textContent = "remove task";
   taskActions.append(removeButton);
 
   removeButton.addEventListener("click", () => {
@@ -39,24 +39,35 @@ function makeTaskItem(task) {
   });
 
   const editButton = document.createElement("button");
-  editButton.classList.add("task-edit-button");
-  editButton.textContent = "edit button";
+  editButton.classList.add("button", "task-edit-button");
+  editButton.textContent = "edit task";
   taskActions.append(editButton);
 
-  editButton.addEventListener("click", () => {
-    console.log("Task Prev Title", task.title);
-    // открываем форму редактирования задачи
-    // пихаем в форму значения кнкретной задачи
-    // вешаем обработчики событий на элементы формы
-    // вешаем обработчик события на сохранение формы -> отправляем запрос PUT
-    // добавляем кнопку отмены
-
-    task.title = "aasdfasdfadsfadsfasfdsfds!";
-
-    editTask(task)
-      .then(() => getTasks().then(renderTasks))
+editButton.addEventListener("click", () => {
+  const handleSubmitEditTask = (formData, taskId) => { // Изменено
+    const updatedTask = { ...formData, id: taskId }; // Собираем объект
+    editTask(updatedTask)
+      .then(() => {
+        const form = document.querySelector(".task-form"); // Ищем форму по классу
+        if(form) form.remove();
+        getTasks().then(renderTasks);
+      })
       .catch(console.log);
+  };
+
+  const editFormElem = createTaskForm(task, handleSubmitEditTask, () => { // Изменено
+      const form = document.querySelector(".task-form"); // Ищем форму по классу
+      if(form) form.remove();
   });
+  document.body.append(editFormElem);
+});
+
+    // TODO:
+    // при открытии формы -> фокус на первом поле
+    // добавить валидацию на пустые поля (title)
+    // открывать возможность отправить запрос на сервер только если данные менялись (дизейл кнопки сохранить)
+    // добавить компонент модального окна с overlay ....
+  
 
   taskElement.append(taskActions);
   return taskElement;
@@ -78,3 +89,37 @@ function renderTasks(tasks) {
 
   tasksContainer.append(taskList);
 }
+
+const addNewTaskButton = document.querySelector(".task-add-button");
+
+addNewTaskButton.addEventListener("click", () => {
+  const handleSubmitAddTask = (formData, taskId) => { 
+    const newTask = formData; 
+    const isValid = isTaskValid(newTask);
+
+    if (!isValid) {
+      const form = document.querySelector(".task-form");
+      const errElem = form.querySelector(".form-error");
+      errElem.innerHTML = "";
+      errElem.textContent = "Форма невалидна, заполните все поля и повторите.";
+      errElem.hidden = false;
+
+      return;
+    } else {
+      addTask(newTask)
+        .then(() => {
+          const form = document.querySelector(".task-form");
+          if(form) form.remove();
+          getTasks().then(renderTasks);
+        })
+        .catch(console.log);
+    }
+  };
+
+  const addFormElem = createTaskForm(null, handleSubmitAddTask, () => { // Изменено
+      const form = document.querySelector(".task-form");
+      if(form) form.remove();
+  });
+  document.body.append(addFormElem);
+});
+
