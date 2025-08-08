@@ -74,6 +74,10 @@ body {
   z-index: 9999;
 }
 
+.task-form--error {
+  border: 3px solid red;
+}
+
 .task-form-item {
   width: 100%;
 }

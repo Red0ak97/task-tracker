@@ -1,7 +1,6 @@
 const BASE_URL = "http://localhost:3000";
 
 export function getTasks() {
-  console.log("new get tasks");
   return fetch(`${BASE_URL}/tasks`)
     .then((response) => {
       return response.json();
@@ -48,17 +47,4 @@ export function addTask(newTask) {
       throw new Error("Ошибка при редактировании задачи. Попрбуйте снова");
     }
   });
-}
-
-export function isTaskValid(task) {
-  // Валидация: проверяем, что title и description не пустые
-  // trim() удаляет пробелы по краям, чтобы "   " не считалось валидным
-  if (!task.title || task.title.trim() === "") {
-    return false;
-  }
-  if (!task.description || task.description.trim() === "") {
-    return false;
-  }
-  // Добавь здесь другие правила валидации, если нужно (например, для status)
-  return true;
 }

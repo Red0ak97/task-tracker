@@ -1,1 +1,1 @@
-export { createTaskForm } from "./task-form.js";
+export { TaskForm } from "./task-form/TaskForm.js";
