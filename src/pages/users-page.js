@@ -1,4 +1,5 @@
 import { getUsers } from "../api/users.js";
+import { UserItem } from "../components/user-item/UserItem.js";
 
 export class UsersPage {
   constructor({ container }) {
@@ -25,19 +26,12 @@ export class UsersPage {
     }
 
     const usersList = this.container.querySelector(".users-list");
+      
+    
     usersList.innerHTML = "";
-    users.forEach(({ name, age, role, avatar }) => {
-      const userContainer = document.createElement("div");
-      userContainer.innerHTML = `
-        <div>name: ${name} </div>
-        <div>age: ${age} </div>
-        <div>role: ${role} </div>
-        <div>
-          avatar: 
-          <img src="${avatar}" width="100" height="100"/>
-        </div>
-      `;
-      usersList.append(userContainer);
-    });
+    users.forEach((user) => {
+      const usersElem = new UserItem({user});
+      usersList.append(usersElem.render());
+      });
+    };
   }
-}
